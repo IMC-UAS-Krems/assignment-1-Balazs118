@@ -65,6 +65,20 @@ def platform() -> StreamingPlatform:
     for user in (alice, bob):
         platform.add_user(user)
 
+    # ------------------------------------------------------------------
+    # Sessions
+    # ------------------------------------------------------------------
+    # Alice (FreeUser) listens to t1 for 120s (2m) RECENTLY
+    s1 = ListeningSession("s1", alice, t1, RECENT, 120)
+    platform.record_session(s1)
+
+    # Bob (PremiumUser) listens to t1 for 180s (3m) RECENTLY
+    s2 = ListeningSession("s2", bob, t1, RECENT + timedelta(minutes=5), 180)
+    platform.record_session(s2)
+
+    # Bob (PremiumUser) listens to t2 for 240s (4m) OLD
+    s3 = ListeningSession("s3", bob, t2, OLD, 240)
+    platform.record_session(s3)
 
     return platform
 

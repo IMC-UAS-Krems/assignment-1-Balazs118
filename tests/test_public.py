@@ -52,10 +52,9 @@ class TestTotalListeningTime:
         )
         assert result == 0.0
 
-    # TODO: Add a test that verifies the correct value for a known time period.
-    #       Calculate the expected total based on the fixture data in conftest.py.
     def test_known_period_value(self, platform: StreamingPlatform) -> None:
-        pass
+        result = platform.total_listening_time_minutes(RECENT, FIXED_NOW)
+        assert result == 5.0
 
 
 # ===========================================================================
@@ -82,11 +81,9 @@ class TestAvgUniqueTracksPremium:
         p.add_user(FreeUser("u99", "Nobody", age=25))
         assert p.avg_unique_tracks_per_premium_user() == 0.0
 
-    # TODO: Add a test with the fixture platform that verifies the correct
-    #       average for premium users. You'll need to count unique tracks
-    #       per premium user and calculate the average.
     def test_correct_value(self, platform: StreamingPlatform) -> None:
-        pass
+        result = platform.avg_unique_tracks_per_premium_user(days=30)
+        assert result == 1.0
 
 
 # ===========================================================================
@@ -107,10 +104,10 @@ class TestTrackMostDistinctListeners:
         p = StreamingPlatform("Empty")
         assert p.track_with_most_distinct_listeners() is None
 
-    # TODO: Add a test that verifies the correct track is returned.
-    #       Count listeners per track from the fixture data.
     def test_correct_track(self, platform: StreamingPlatform) -> None:
-        pass
+        track = platform.track_with_most_distinct_listeners()
+        assert track is not None
+        assert track.track_id == "t1"
 
 
 # ===========================================================================
@@ -140,9 +137,11 @@ class TestAvgSessionDurationByType:
         durations = [r[1] for r in result]
         assert durations == sorted(durations, reverse=True)
 
-    # TODO: Add tests to verify all user types are present and have correct averages.
     def test_all_user_types_present(self, platform: StreamingPlatform) -> None:
-        pass
+        result = platform.avg_session_duration_by_user_type()
+        assert len(result) == 2
+        assert result[0] == ("PremiumUser", 210.0)
+        assert result[1] == ("FreeUser", 120.0)
 
 
 # ===========================================================================
