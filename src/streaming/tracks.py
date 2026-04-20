@@ -37,20 +37,16 @@ class Song(Track):
         super().__init__(track_id, title, duration_seconds, genre)
         self.artist = artist
 
-
 class SingleRelease(Song):
     def __init__(self, track_id: str,title: str, duration_seconds: int, genre: str, artist, release_date=None, release_year: int = None):
         super().__init__(track_id, title, duration_seconds, genre, artist)
         self.release_date = release_date
         self.release_year = release_year
-
-
 class AlbumTrack(Song):
     def __init__(self, track_id: str, title: str, duration_seconds: int, genre: str, artist, track_number: int = 1):
         super().__init__(track_id, title, duration_seconds, genre, artist)
         self.track_number = track_number
         self.album = None
-
 
 class Podcast(Track):
     def __init__(self, track_id: str, title: str, duration_seconds: int, genre: str, host: str = "", description: str = ""):
@@ -58,12 +54,10 @@ class Podcast(Track):
         self.host = host
         self.description = description
 
-
 class InterviewEpisode(Podcast):
     def __init__( self, track_id: str, title: str, duration_seconds: int, genre: str, host: str = "", description: str = "",guest: str = ""):
         super().__init__(track_id, title, duration_seconds, genre, host, description)
         self.guest = guest
-
 
 class NarrativeEpisode(Podcast):
     def __init__(self, track_id: str, title: str, duration_seconds: int, genre: str, host: str = "", description: str = "", season: int = 1, episode_number: int = 1):

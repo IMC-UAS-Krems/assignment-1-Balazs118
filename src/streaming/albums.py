@@ -21,15 +21,21 @@ class Album:
         track.album = self
 
     def track_ids(self) -> set[str]:
-        return {t.track_id for t in self._tracks}
+        result_ids = set()
+        for track in self._tracks:
+            result_ids.add(track.track_id) 
+        return result_ids
 
     def duration_seconds(self) -> int:
-        return sum(t.duration_seconds for t in self._tracks)
+        total_duration = 0
+        for track in self._tracks:
+            total_duration += track.duration_seconds
+        return total_duration
 
     @property
     def tracks(self) -> list:
-        def get_track_number(t):
-            return t.track_number
+        def get_track_number(track):
+            return track.track_number
         try:
             return sorted(self._tracks, key=get_track_number)
         except AttributeError:

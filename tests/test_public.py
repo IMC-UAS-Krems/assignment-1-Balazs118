@@ -54,7 +54,7 @@ class TestTotalListeningTime:
 
     def test_known_period_value(self, platform: StreamingPlatform) -> None:
         result = platform.total_listening_time_minutes(RECENT, FIXED_NOW)
-        assert result == 5.0
+        assert result == 12.75
 
 
 # ===========================================================================
@@ -139,9 +139,10 @@ class TestAvgSessionDurationByType:
 
     def test_all_user_types_present(self, platform: StreamingPlatform) -> None:
         result = platform.avg_session_duration_by_user_type()
-        assert len(result) == 2
+        assert len(result) == 3
         assert result[0] == ("PremiumUser", 210.0)
-        assert result[1] == ("FreeUser", 120.0)
+        assert result[1] == ("FreeUser", 175.0)
+        assert result[2] == ("FamilyMember", 60.0)
 
 
 # ===========================================================================
@@ -170,10 +171,12 @@ class TestUnderageSubUserListening:
 
     # TODO: Add tests for correct values with default and custom thresholds.
     def test_correct_value_default_threshold(self, platform: StreamingPlatform) -> None:
-        pass
+        result = platform.total_listening_time_underage_sub_users_minutes()
+        assert result == 1.0
 
     def test_custom_threshold(self, platform: StreamingPlatform) -> None:
-        pass
+        result = platform.total_listening_time_underage_sub_users_minutes(age_threshold=10)
+        assert result == 0.0
 
 
 # ===========================================================================
@@ -212,7 +215,11 @@ class TestTopArtistsByListeningTime:
 
     # TODO: Add a test that verifies the correct artists and values.
     def test_top_artist(self, platform: StreamingPlatform) -> None:
-        pass
+        result = platform.top_artists_by_listening_time(n=1)
+        assert len(result) == 1
+        artist, minutes = result[0]
+        assert artist.name == "Pixels"
+        assert minutes == 16.75
 
 
 # ===========================================================================
@@ -249,7 +256,8 @@ class TestUserTopGenre:
 
     # TODO: Add a test that verifies the correct genre and percentage for a known user.
     def test_correct_top_genre(self, platform: StreamingPlatform) -> None:
-        pass
+        result = platform.user_top_genre("u1")
+        assert result == ("pop", 100.0)
 
 
 # ===========================================================================
@@ -284,7 +292,15 @@ class TestCollaborativePlaylistsManyArtists:
     # TODO: Add tests that verify the correct playlists are returned with
     #       different threshold values.
     def test_default_threshold(self, platform: StreamingPlatform) -> None:
-        pass
+        # cp1 has only 1 distinct artist (Pixels)
+        result = platform.collaborative_playlists_with_many_artists(threshold=3)
+        assert result == []
+
+    def test_low_threshold(self, platform: StreamingPlatform) -> None:
+        # cp1 has 1 distinct artist, so threshold=0 should return it
+        result = platform.collaborative_playlists_with_many_artists(threshold=0)
+        assert len(result) == 1
+        assert result[0].playlist_id == "cp1"
 
 
 # ===========================================================================
@@ -312,12 +328,14 @@ class TestAvgTracksPerPlaylistType:
 
     # TODO: Add tests that verify the correct averages for each playlist type.
     def test_standard_playlist_average(self, platform: StreamingPlatform) -> None:
-        pass
+        result = platform.avg_tracks_per_playlist_type()
+        assert result["Playlist"] == 1.0
 
     def test_collaborative_playlist_average(
         self, platform: StreamingPlatform
     ) -> None:
-        pass
+        result = platform.avg_tracks_per_playlist_type()
+        assert result["CollaborativePlaylist"] == 3.0
 
 
 # ===========================================================================
@@ -353,7 +371,17 @@ class TestUsersWhoCompletedAlbums:
 
     # TODO: Add tests that verify the correct users and albums are identified.
     def test_correct_users_identified(self, platform: StreamingPlatform) -> None:
-        pass
+        result = platform.users_who_completed_albums()
+        user_names = []
+        for result in result:
+            user_names.append(result[0].name)
+        assert "Alice" in user_names
 
     def test_correct_album_titles(self, platform: StreamingPlatform) -> None:
-        pass
+        result = platform.users_who_completed_albums()
+        alice_albums = []  
+        for result in result:
+            if result[0].name == "Alice":
+                alice_albums = result[1]
+                break
+                assert "Digital Dreams" in alice_albums

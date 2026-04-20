@@ -23,10 +23,17 @@ class Playlist:
             self._tracks.append(track)
 
     def remove_track(self, track_id: str) -> None:
-        self._tracks = [t for t in self._tracks if t.track_id != track_id]
+        kept_tracks = []
+        for track in self._tracks:
+            if track.track_id != track_id:
+                kept_tracks.append(track)
+        self._tracks = kept_tracks
 
     def total_duration_seconds(self) -> int:
-        return sum(t.duration_seconds for t in self._tracks)
+        total_seconds = 0
+        for track in self._tracks:
+            total_seconds += track.duration_seconds
+        return total_seconds
 
     @property
     def tracks(self) -> list:

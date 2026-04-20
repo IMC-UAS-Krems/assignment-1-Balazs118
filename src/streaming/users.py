@@ -21,7 +21,6 @@ class User:
 
     def add_session(self, session) -> None:
         self.sessions.append(session)
-
     def total_listening_seconds(self) -> float:
         total_seconds = 0
         for s in self.sessions:

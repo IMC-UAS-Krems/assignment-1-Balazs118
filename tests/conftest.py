@@ -59,26 +59,46 @@ def platform() -> StreamingPlatform:
     # ------------------------------------------------------------------
     # Users
     # ------------------------------------------------------------------
-    alice = FreeUser("u1", "Alice",   age=30)
-    bob   = PremiumUser("u2", "Bob",   age=25, subscription_start=date(2023, 1, 1))
+    alice   = FreeUser("u1", "Alice",   age=30)
+    bob     = PremiumUser("u2", "Bob",   age=25, subscription_start=date(2023, 1, 1))
+    charlie = FamilyAccountUser("u3", "Charlie", age=40)
+    dave    = FamilyMember("u4", "Dave", age=15, parent=charlie)
 
-    for user in (alice, bob):
+    for user in (alice, bob, charlie, dave):
         platform.add_user(user)
 
-    # ------------------------------------------------------------------
-    # Sessions
-    # ------------------------------------------------------------------
-    # Alice (FreeUser) listens to t1 for 120s (2m) RECENTLY
+    #playlists
+    p1 = Playlist("pl1", "Alice's Mix", alice)
+    p1.add_track(t1)
+    platform.add_playlist(p1)
+
+    cp1 = CollaborativePlaylist("cp1", "Bob & Dave's Jams", bob)
+    cp1.add_track(t1)
+    cp1.add_track(t2)
+    cp1.add_track(t3)
+    platform.add_playlist(cp1)
+
+    #sessions
     s1 = ListeningSession("s1", alice, t1, RECENT, 120)
     platform.record_session(s1)
 
-    # Bob (PremiumUser) listens to t1 for 180s (3m) RECENTLY
+    #Bob (PremiumUser) listens to t1 for 180s (3m) RECENTLY
     s2 = ListeningSession("s2", bob, t1, RECENT + timedelta(minutes=5), 180)
     platform.record_session(s2)
 
-    # Bob (PremiumUser) listens to t2 for 240s (4m) OLD
+    #Bob (PremiumUser) listens to t2 for 240s (4m) OLD
     s3 = ListeningSession("s3", bob, t2, OLD, 240)
     platform.record_session(s3)
+
+    #Dave (FamilyMember, age 15) listens to t1 for 60s (1m) RECENTLY
+    s4 = ListeningSession("s4", dave, t1, RECENT, 60)
+    platform.record_session(s4)
+
+    #Alice listens to t2 and t3 to complete "Digital Dreams"
+    s5 = ListeningSession("s5", alice, t2, RECENT, 210)
+    s6 = ListeningSession("s6", alice, t3, RECENT, 195)
+    platform.record_session(s5)
+    platform.record_session(s6)
 
     return platform
 
